@@ -7,7 +7,6 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
-
     <uses-permission
         android:name="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
         tools:ignore="ProtectedPermissions" />
@@ -24,16 +23,20 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/AppTheme">
-<!--        <activity-->
-<!--            android:name=".permission_activity"-->
-<!--            android:exported="true"-->
-<!--            android:label="@string/title_activity_permission"-->
-<!--            android:theme="@style/AppTheme.NoActionBar" />-->
-
+        <activity
+            android:name=".PermissionActiviry"
+            android:exported="false"
+            android:label="@string/title_activity_permission_activiry"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <!-- <activity -->
+        <!-- android:name=".permission_activity" -->
+        <!-- android:exported="true" -->
+        <!-- android:label="@string/title_activity_permission" -->
+        <!-- android:theme="@style/AppTheme.NoActionBar" /> -->
         <service
             android:name=".IntervalNotiService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
 
         <activity
             android:name=".MainActivity"
@@ -49,22 +52,16 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".ForcegroundService"
-            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.service.notification.NotificationListenerService" />
-            </intent-filter>
-        </service>
-
-        <receiver
-            android:name=".Broadcast"
-            android:exported="true"
-            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
-            <intent-filter>
-                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
-            </intent-filter>
-        </receiver>
+        <service
+            android:name=".ForcegroundService"
+            android:enabled="true"
+            android:exported="true" /> <!-- <receiver -->
+        <!-- android:name=".Broadcast" -->
+        <!-- android:exported="true"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="android.provider.Telephony.SMS_RECEIVED" /> -->
+        <!-- </intent-filter> -->
+        <!-- </receiver> -->
         <service
             android:name=".NotificationService"
             android:exported="true"
@@ -73,6 +70,7 @@
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
         </service>
+
         <receiver
             android:name=".IntervalNotiService"
             android:exported="true"
@@ -83,10 +81,11 @@
         </receiver>
         <receiver
             android:name=".ReadNotiBroadcast"
+            android:enabled="true"
             android:exported="true"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
             <intent-filter>
-                <action android:name="android.service.notification.NotificationListenerService" />
+                <action android:name="READ_NOTIFICATION_ACTION" />
             </intent-filter>
         </receiver>
     </application>

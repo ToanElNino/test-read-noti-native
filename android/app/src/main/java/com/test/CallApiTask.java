@@ -21,11 +21,6 @@ public class CallApiTask extends AsyncTask<RequestBody,Void, Response> {
     protected Response doInBackground(RequestBody... requestBodies) {
         OkHttpClient client = new OkHttpClient();
 
-//        RequestBody formBody = new FormBody.Builder()
-//                .add("appName", "ihih")
-//                .add("sender", "oke")
-//                .add("content", "Tòn")
-//                .build();
         Request request = new Request.Builder()
                 .url("https://64098fd06ecd4f9e18b44632.mockapi.io/api/notificationLogs")
                 .post(requestBodies[0])

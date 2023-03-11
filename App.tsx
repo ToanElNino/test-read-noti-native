@@ -9,6 +9,8 @@
 import React from 'react';
 import type {PropsWithChildren} from 'react';
 import {NativeModules} from 'react-native';
+import {PermissionsAndroid} from 'react-native';
+import {check, PERMISSIONS, RESULTS} from 'react-native-permissions';
 
 const {CalendarModule} = NativeModules;
 
@@ -31,35 +33,22 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
+import {createStackNavigator} from '@react-navigation/stack';
+import {NavigationContainer} from '@react-navigation/native';
+
+import SelectApp from './src/components/select-app/SelectAppComponent';
+import Setting from './src/components/setting/SettingComponent';
+
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
 
-function Section({children, title}: SectionProps): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
+type RootStackParamList = {
+  Setting: undefined;
+  SelectApp: undefined;
+  // Feed: {sort: 'latest' | 'top'} | undefined;
+};
+const RootStack = createStackNavigator<RootStackParamList>();
 
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
@@ -67,60 +56,23 @@ function App(): JSX.Element {
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
+  console.log(
+    'check permission in react native',
+    PermissionsAndroid.PERMISSIONS.ACCESS_NOTIFICATION_POLICY,
+  );
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => {
-          CalendarModule.createCalendarEvent('testName', 'testLocation');
-        }}>
-        <Text>Start service1</Text>
-      </TouchableOpacity>
-      {/* <TouchableOpacity
-              style={styles.button}
-
-        onPress={() => {
-          CalendarModule.stopService();
-        }}>
-        <Text>End service</Text>
-      </TouchableOpacity> */}
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => {
-          CalendarModule.startInterValNotification();
-        }}>
-        <Text>create new random notification</Text>
-      </TouchableOpacity>
-      {/*<ScrollView*/}
-      {/*  contentInsetAdjustmentBehavior="automatic"*/}
-      {/*  style={backgroundStyle}>*/}
-      {/*  <Header />*/}
-      {/*  <View*/}
-      {/*    style={{*/}
-      {/*      backgroundColor: isDarkMode ? Colors.black : Colors.white,*/}
-      {/*    }}>*/}
-      {/*    <Section title="Step One">*/}
-      {/*      Edit <Text style={styles.highlight}>App.tsx</Text> to change this*/}
-      {/*      screen and then come back to see your edits.*/}
-      {/*    </Section>*/}
-      {/*    <Section title="See Your Changes">*/}
-      {/*      <ReloadInstructions />*/}
-      {/*    </Section>*/}
-      {/*    <Section title="Debug">*/}
-      {/*      <DebugInstructions />*/}
-      {/*    </Section>*/}
-      {/*    <Section title="Learn More">*/}
-      {/*      Read the docs to discover what to do next:*/}
-      {/*    </Section>*/}
-      {/*    <LearnMoreLinks />*/}
-      {/*  </View>*/}
-      {/*</ScrollView>*/}
-    </SafeAreaView>
+    <NavigationContainer>
+      <RootStack.Navigator initialRouteName="Setting">
+        <RootStack.Screen name="Setting" component={Setting} />
+        <RootStack.Screen
+          name="SelectApp"
+          component={SelectApp}
+          // initialParams={{userId: user.id}}
+        />
+        {/* <RootStack.Screen name="Feed" component={Feed} /> */}
+      </RootStack.Navigator>
+    </NavigationContainer>
   );
 }
 

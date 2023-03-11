@@ -1,5 +1,7 @@
 package com.test; // replace com.your-app-name with your app’s name
 
+import com.facebook.hermes.intl.Constants;
+import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
@@ -14,6 +16,8 @@ import androidx.core.content.ContextCompat;
 class CalendarModule extends ReactContextBaseJavaModule {
 //   private Context context;
    ForcegroundService test = new ForcegroundService();
+   NotificationService test1 = new NotificationService();
+
    CalendarModule(ReactApplicationContext context) {
       super(context);
    }
@@ -24,22 +28,21 @@ class CalendarModule extends ReactContextBaseJavaModule {
       return "CalendarModule";
    }
 
-   @ReactMethod(isBlockingSynchronousMethod = true)
-   public void createCalendarEvent(String name, String location) {
-      Log.d("CalendarModule", "Create event called with name: " + name
-      + " and location: " + location);
-      Intent serviceIntent = new Intent(this.getReactApplicationContext(), ForcegroundService.class);
-      serviceIntent.putExtra("inputExtra", "Foreground Service Example in Android");
-
-//      Intent notiIntent = new Intent(this.getReactApplicationContext(), NotificationService.class);
-//      notiIntent.putExtra("inputExtra", "Foreground Service Example in Android");
-
+   @ReactMethod
+   public void startFeature() {
+//      Intent serviceIntent = new Intent(this.getReactApplicationContext(), ForcegroundService.class);
+//      serviceIntent.putExtra("foregroundExtra", "START_SERVICE");
+      Intent serviceIntent1 = new Intent(this.getReactApplicationContext(), NotificationService.class);
+      serviceIntent1.putExtra("foregroundExtra", "START_SERVICE");
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
          Log.d("check version", "test force ground service" );
-         ContextCompat.startForegroundService(this.getReactApplicationContext(), serviceIntent);
+//         ContextCompat.startForegroundService(this.getReactApplicationContext(), serviceIntent);
+         ContextCompat.startForegroundService(this.getReactApplicationContext(), serviceIntent1);
+
+//         getReactApplicationContext().stopService(serviceIntent1);
       }
    }
-   @ReactMethod(isBlockingSynchronousMethod = true)
+   @ReactMethod
    public void startInterValNotification(){
       Log.d("check version", "start to create interval notifications" );
       Intent intervalServiceIntent = new Intent(this.getReactApplicationContext(), IntervalNotiService.class);
@@ -49,38 +52,31 @@ class CalendarModule extends ReactContextBaseJavaModule {
          ContextCompat.startForegroundService(this.getReactApplicationContext(), intervalServiceIntent);
       }
    }
-//   public void startService() {
-////      Log.d("CalendarModule", "test force ground service" );
-////      Intent serviceIntent = new Intent(this.getReactApplicationContext(), ForcegroundService.class);
-////      serviceIntent.putExtra("inputExtra", "Foreground Service Example in Android");
-////      ContextCompat.startForegroundService(this.getReactApplicationContext(), serviceIntent);
-//      Intent serviceIntent = new Intent(this.getReactApplicationContext(), ForcegroundService.class);
-//      serviceIntent.putExtra("inputExtra", "Foreground Service Example in Android");
-////      ContextCompat.startForegroundService(this.getReactApplicationContext(), serviceIntent);
-////      Intent serviceIntent = new Intent(this.getReactApplicationContext(), ForegroundService.class);
-////      test.onCreate();
-//      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//         Log.d("check version", "start force ground service" );
-//         ContextCompat.startForegroundService(this.getReactApplicationContext(), serviceIntent);
-//      }
-//   }
-//   public void stopService1() {
-//      Intent serviceIntent = new Intent(this.getReactApplicationContext(), ForcegroundService.class);
-////      serviceIntent.putExtra("inputExtra", "Foreground Service Example in Android");
-////      ContextCompat.startForegroundService(this.getReactApplicationContext(), serviceIntent);
-////      Intent serviceIntent = new Intent(this.getReactApplicationContext(), ForegroundService.class);
-////      test.onCreate();
-//      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//         Log.d("check version", "stop force ground service" );
-////         @Override
-////         stopService();
-////         ContextCompat.startForegroundService(this.getReactApplicationContext(), serviceIntent);
-//
-//      }
-//   }
-//   public void stopService() {
-//      Intent serviceIntent = new Intent(this.getReactApplicationContext(), ForcegroundService.class);
-//      stopService(serviceIntent);
-//   }
+@ReactMethod
+public void stopFeature() {
+      Intent stopIntent = new Intent(this.getReactApplicationContext(), NotificationService.class);
+      stopIntent.putExtra("foregroundExtra", "STOP_SERVICE");
+      ContextCompat.startForegroundService(this.getReactApplicationContext(), stopIntent);
+//      getReactApplicationContext().stopService(stopIntent);
 
+}
+   @ReactMethod
+   public void TurnOnService() {
+      startFeature();
+     test1.setIsRunningService(true);
+   }
+   @ReactMethod
+   public void TurnOffService() {
+      test1.setIsRunningService(false);
+      stopFeature();
+   }
+   @ReactMethod
+   public void getValueFromJavaLayer(int param, Callback callback) {
+      try {
+         // do something
+         callback.invoke(test1.getIsRunningService()); // Invoke the callback here
+      } catch (Exception e) {
+         // exception code here
+      }
+   }
 }

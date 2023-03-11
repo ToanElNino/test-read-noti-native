@@ -18,6 +18,8 @@ public class Broadcast extends BroadcastReceiver {
     public static final String pdu_type = "pdus";
     @Override
     public void onReceive(Context context, Intent intent) {
+        Log.i("interval", "sms boardcast log.");
+
 // Get the SMS message.
         Bundle bundle = intent.getExtras();
         SmsMessage[] msgs;
