@@ -24,11 +24,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".NotiPermissionAcitivity"
+            android:exported="false" />
+        <activity
             android:name=".PermissionActiviry"
             android:exported="false"
             android:label="@string/title_activity_permission_activiry"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <!-- <activity -->
+            android:theme="@style/AppTheme.NoActionBar" /> <!-- <activity -->
         <!-- android:name=".permission_activity" -->
         <!-- android:exported="true" -->
         <!-- android:label="@string/title_activity_permission" -->

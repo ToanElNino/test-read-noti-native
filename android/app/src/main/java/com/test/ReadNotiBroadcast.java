@@ -18,17 +18,14 @@ import okhttp3.RequestBody;
 public class ReadNotiBroadcast extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i("interval", "noti boardcast log.");
+//            Log.i("interval", "noti boardcast log.");
 
-            new Timer().scheduleAtFixedRate(new TimerTask() {
-                @Override
-                public void run() {
-                    Log.i("interval", "noti boardcast log.");
-                }
-            }, 0, 5000);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                Log.d(com.test.Broadcast.class.getSimpleName(), "Air Plane mode");
-            }
+//            new Timer().scheduleAtFixedRate(new TimerTask() {
+//                @Override
+//                public void run() {
+//                    Log.i("interval", "noti boardcast log.");
+//                }
+//            }, 0, 5000);
             String appName = intent.getStringExtra("appName");
             String content = intent.getStringExtra("content");
             String sender = intent.getStringExtra("sender");

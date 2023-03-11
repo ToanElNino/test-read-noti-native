@@ -93,7 +93,7 @@ public class ForcegroundService extends Service{
             //your end servce code
             stopForeground(true);
             stopSelf();
-            stopSelfResult(startId);
+//            stopSelfResult(startId);
         }
 
         return START_NOT_STICKY;

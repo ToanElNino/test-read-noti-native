@@ -73,14 +73,10 @@ public class NotificationService extends NotificationListenerService {
     }
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-//        Log.d("CalendarModule", "onStartCommand notification service" );
-        Log.d("noti service", "onStartCommand" );
+//        Log.d("noti service", "onStartCommand" );
         String input = intent.getStringExtra("foregroundExtra");
         if(input.equals("START_SERVICE")){
-            broadcastSMS = new Broadcast();
-            IntentFilter filterSMS = new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
-            registerReceiver(broadcastSMS, filterSMS);
-            Log.i("noti service", "noti service log.");
+//            Log.i("noti service", "noti service log.");
 
             broadcastNoti = new ReadNotiBroadcast();
             IntentFilter filterNoti = new IntentFilter("READ_NOTIFICATION_ACTION");
@@ -100,21 +96,18 @@ public class NotificationService extends NotificationListenerService {
                     .build();
             startForeground(1902, notification);
         } else if (input.equals("STOP_SERVICE")) {
-            Log.i("noti service", "Received Stop Foreground Intent");
+            unregisterReceiver(broadcastNoti);
+//            Log.i("noti service", "Received Stop Foreground Intent");
             //your end servce code
             stopForeground(true);
-//            stopSelfResult(startId);
-//            stopService(intent);
-//            stopService();
+            stopSelfResult(startId);
+            stopService(intent);
             stopSelf();
-//            stopSelf(startId);
-            cancelAllNotifications();
-            unregisterReceiver(broadcastSMS);
         }
         return START_NOT_STICKY;
     }
     private void createNotificationChannel() {
-        Log.d("CalendarModule", "createNotificationChannel" );
+//        Log.d("CalendarModule", "createNotificationChannel" );
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel serviceChannel = new NotificationChannel(
                     CHANNEL_ID,
@@ -148,31 +141,15 @@ public class NotificationService extends NotificationListenerService {
         newIntent.putExtra("content", text);
         sendBroadcast(newIntent);
 
-
-
-        if(isRunningService){
-            Log.i("Package",pack);
-            Log.i("Ticker",ticker);
-            Log.i("Title",title);
-            Log.i("Text",text);
-//        Toast.makeText(this, text, Toast.LENGTH_LONG).show();
-
-//            RequestBody formBody = new FormBody.Builder()
-//                    .add("appName", pack)
-//                    .add("sender", title)
-//                    .add("content", text)
-//                    .build();
-            Toast.makeText(this, text, Toast.LENGTH_LONG).show();
-//            CallApiTask myAsyncTask = new CallApiTask();
-//            try {
-//                myAsyncTask.execute(formBody);
-//                // Do something with the response.
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-        }else{
-//            Toast.makeText(this, "Service is off", Toast.LENGTH_LONG).show();
-        }
+//        if(isRunningService){
+//            Log.i("Package",pack);
+//            Log.i("Ticker",ticker);
+//            Log.i("Title",title);
+//            Log.i("Text",text);
+//            Toast.makeText(this, text, Toast.LENGTH_LONG).show();
+//        }else{
+////            Toast.makeText(this, "Service is off", Toast.LENGTH_LONG).show();
+//        }
     }
     @Override
 
@@ -182,7 +159,7 @@ public class NotificationService extends NotificationListenerService {
     @Override
     public void onDestroy() {
         Log.i("noti service","destroy");
-        unregisterReceiver(broadcastSMS);
+        unregisterReceiver(broadcastNoti);
         super.onDestroy();
     }
 //    @Override

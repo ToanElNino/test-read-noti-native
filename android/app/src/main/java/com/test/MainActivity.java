@@ -30,52 +30,14 @@ public class MainActivity extends ReactActivity {
     @Override
  public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    Log.d("CalendarModule", "on create main activity");
-//      requestNotificationPermission();
+//    Log.d("CalendarModule", "on create main activity");
       boolean isNotificationServiceRunning = isNotificationServiceRunning();
       if(!isNotificationServiceRunning){
-          requestNotificationPermission();
-
-//          Intent paIntent = new Intent(this, permission_activity.class);
-//          paIntent.putExtra("inputExtra", "Foreground Service Example in Android");
-//          startService(paIntent);
-            startActivity(new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS));
+          Intent intentPermission = new Intent(this, NotiPermissionAcitivity.class);
+          startActivity(intentPermission);
       }
 
   }
-    private void requestNotificationPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NOTIFICATION_POLICY) == PackageManager.PERMISSION_GRANTED)
-            return;
-
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_NOTIFICATION_POLICY)) {
-
-        }
-
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_NOTIFICATION_POLICY}, NOTIFICATION_PERMISSION_CODE );
-    }
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-
-        // Checking the request code of our request
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == NOTIFICATION_PERMISSION_CODE) {
-
-            // If permission is granted
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Displaying a toast
-//                Toast.makeText(this, "You've enabled Notification Access Permission for this application", Toast.LENGTH_LONG).show();
-                Intent serviceIntent = new Intent(this, NotificationService.class);
-                // serviceIntent.putExtra("foregroundExtra", "START_SERVICE");
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    Log.d("check version", "test force ground service" );
-                    // ContextCompat.startForegroundService(this, serviceIntent);
-                }
-            } else {
-                // Displaying another toast if permission is not granted
-                Toast.makeText(this, "You need to allow Notification Access Permission to store all new notifications from selected applications", Toast.LENGTH_LONG).show();
-            }
-        }
-    }
     private boolean isNotificationServiceRunning() {
         ContentResolver contentResolver = getContentResolver();
         String enabledNotificationListeners =

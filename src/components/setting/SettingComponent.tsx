@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, TouchableOpacity} from 'react-native';
+import {View} from 'react-native';
 import {StyleSheet} from 'react-native';
 import ToggleSwitch from 'toggle-switch-react-native';
 import {NativeModules} from 'react-native';
@@ -45,7 +45,7 @@ function Setting(): JSX.Element {
           onToggle={value => handleToggleService(value)}
         />
       </View>
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={styles.button}
         onPress={() => {
           CalendarModule.startFeature();
@@ -59,6 +59,13 @@ function Setting(): JSX.Element {
         }}>
         <Text>Stop service</Text>
       </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => {
+          CalendarModule.OpenPermission();
+        }}>
+        <Text>open permission</Text>
+      </TouchableOpacity> */}
       {/* <TouchableOpacity
         style={styles.button}
         onPress={() => {

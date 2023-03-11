@@ -28,7 +28,7 @@ class CalendarModule extends ReactContextBaseJavaModule {
       return "CalendarModule";
    }
 
-   @ReactMethod
+   @ReactMethod(isBlockingSynchronousMethod = true)
    public void startFeature() {
 //      Intent serviceIntent = new Intent(this.getReactApplicationContext(), ForcegroundService.class);
 //      serviceIntent.putExtra("foregroundExtra", "START_SERVICE");
@@ -42,7 +42,7 @@ class CalendarModule extends ReactContextBaseJavaModule {
 //         getReactApplicationContext().stopService(serviceIntent1);
       }
    }
-   @ReactMethod
+   @ReactMethod(isBlockingSynchronousMethod = true)
    public void startInterValNotification(){
       Log.d("check version", "start to create interval notifications" );
       Intent intervalServiceIntent = new Intent(this.getReactApplicationContext(), IntervalNotiService.class);
@@ -52,25 +52,25 @@ class CalendarModule extends ReactContextBaseJavaModule {
          ContextCompat.startForegroundService(this.getReactApplicationContext(), intervalServiceIntent);
       }
    }
-@ReactMethod
-public void stopFeature() {
+   @ReactMethod(isBlockingSynchronousMethod = true)
+   public void stopFeature() {
       Intent stopIntent = new Intent(this.getReactApplicationContext(), NotificationService.class);
       stopIntent.putExtra("foregroundExtra", "STOP_SERVICE");
       ContextCompat.startForegroundService(this.getReactApplicationContext(), stopIntent);
 //      getReactApplicationContext().stopService(stopIntent);
 
 }
-   @ReactMethod
+   @ReactMethod(isBlockingSynchronousMethod = true)
    public void TurnOnService() {
       startFeature();
      test1.setIsRunningService(true);
    }
-   @ReactMethod
+   @ReactMethod(isBlockingSynchronousMethod = true)
    public void TurnOffService() {
-      test1.setIsRunningService(false);
       stopFeature();
+      test1.setIsRunningService(false);
    }
-   @ReactMethod
+   @ReactMethod(isBlockingSynchronousMethod = true)
    public void getValueFromJavaLayer(int param, Callback callback) {
       try {
          // do something
