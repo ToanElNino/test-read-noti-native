@@ -9,9 +9,8 @@
         android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#0099ff
-"
-        android:paddingVertical="5dp"
+        android:background="#0099ff"
+        android:paddingVertical="10dp"
         android:paddingLeft="20dp"
         android:text="Enable permission"
         android:textColor="#ffffff"

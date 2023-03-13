@@ -129,23 +129,39 @@ public class NotificationService extends NotificationListenerService {
             ticker = sbn.getNotification().tickerText.toString();
         }
         Bundle extras = sbn.getNotification().extras;
-        String title = extras.getString("android.title");
+        String title = extras.getCharSequence("android.title").toString();
         String text = extras.getCharSequence("android.text").toString();
 //        int id1 = extras.getInt(Notification.EXTRA_SMALL_ICON);
 //        Bitmap id = sbn.getNotification().largeIcon;
         //broadcast
-        Intent newIntent = new Intent();
-        newIntent.setAction("READ_NOTIFICATION_ACTION");
-        newIntent.putExtra("appName", pack);
-        newIntent.putExtra("sender", title);
-        newIntent.putExtra("content", text);
-        sendBroadcast(newIntent);
 
+        if(ticker.equals("Zalo") && ticker!=""){
+            Log.i("Zalo noti do not send", ticker);
+
+        }else if(pack.equals("com.zing.zalo")&& title!=""){
+            //kiểm tra kí tự ( trong ticker
+            //Ví dụ "Toan (2 tin nhắn)" thì  chỉ lấy "Toan"
+            int index = title.indexOf('(');
+            if(index > 1){
+                String tmp = title.substring(0,index-1);
+                title = tmp;
+            }
+            Intent newIntent = new Intent();
+            newIntent.setAction("READ_NOTIFICATION_ACTION");
+            newIntent.putExtra("appName", pack);
+            newIntent.putExtra("sender", title);
+            newIntent.putExtra("content", text);
+            sendBroadcast(newIntent);
+        }else{
+            Log.i("From another app", pack);
+        }
 //        if(isRunningService){
-//            Log.i("Package",pack);
-//            Log.i("Ticker",ticker);
-//            Log.i("Title",title);
-//            Log.i("Text",text);
+            Log.i("Package",pack);
+            Log.i("Ticker",ticker);
+            Log.i("Title",title);
+            Log.i("Text",text);
+            Log.i("space","-----");
+
 //            Toast.makeText(this, text, Toast.LENGTH_LONG).show();
 //        }else{
 ////            Toast.makeText(this, "Service is off", Toast.LENGTH_LONG).show();
