@@ -23,6 +23,7 @@ public class CallApiTask extends AsyncTask<RequestBody,Void, Response> {
 
         Request request = new Request.Builder()
                 .url("https://64098fd06ecd4f9e18b44632.mockapi.io/api/notificationLogs")
+//                .url("https://64102d63e1212d9cc92bb329.mockapi.io/zalo_noti")
                 .post(requestBodies[0])
                 .build();
 

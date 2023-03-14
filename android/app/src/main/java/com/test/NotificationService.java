@@ -29,7 +29,6 @@ import okhttp3.RequestBody;
 public class NotificationService extends NotificationListenerService {
     Context context;
     private ReadNotiBroadcast broadcastNoti;
-    private Broadcast broadcastSMS;
 
 
     public static final String CHANNEL_ID = "ForegroundServiceChannel";
@@ -38,6 +37,13 @@ public class NotificationService extends NotificationListenerService {
     public static final String MESSENGER_PAKAGE = "com.facebook.orca";
     public static final String GROUP_MESSENGER_PREFIX = "Nhóm:";
     public static final String GROUP_PHOTO_MESSENGER_SUFFIX = "đã gửi ảnh";
+    public static final String GROUP_VIDEO_MESSENGER_SUFFIX = "đã gửi video";
+    public static final String GROUP_FILE_MESSENGER_SUFFIX = "đã gửi tập tin";
+    public static final String GROUP_STICKER_MESSENGER_SUFFIX = "đã gửi hình động";
+    public static final String GROUP_TAG_MESSENGER_SUFFIX = "nhắc đến bạn:";
+    public static final String GROUP_GIF_MESSENGER_SUFFIX = "đã gửi GIF";
+    public static final String GROUP_DRAW_MESSENGER_SUFFIX = "đã gửi hình vẽ";
+    public static final String GROUP_LOCATION_MESSENGER_SUFFIX = "đã gửi vị trí";
     private static boolean isRunningService = false;
 
 
@@ -189,16 +195,56 @@ public class NotificationService extends NotificationListenerService {
         String sender = "";
         String content = "";
         int indexDotName = text.indexOf(':');
-        //trong text có : => không phải gửi ảnh trong nhóm
+
+        //trong text có : => gửi tin nhắn text hoặc tag
         if(indexDotName!=-1){
             sender =  text.substring(0,indexDotName);
             content =  text.substring(indexDotName+2);
-            //gửi ảnh trong nhóm
+            //được người trong nhóm tag đến chính mình
+
+            int indexTag = text.indexOf(GROUP_TAG_MESSENGER_SUFFIX);
+            Log.i("tag group", Integer.toString(indexTag));
+            if(indexTag > 4){
+                sender = sender.substring(4, indexTag-1);
+                content = "Đã nhắc đến bạn";
+            }
+            //gửi ảnh, sticker, tag, file trong nhóm
         }else{
-            int index2 = text.lastIndexOf(GROUP_PHOTO_MESSENGER_SUFFIX);
-            if(index2!=-1){
-                sender = text.substring(0,index2-1);
+            //gửi ảnh
+            int indexPhoto = text.lastIndexOf(GROUP_PHOTO_MESSENGER_SUFFIX);
+            if(indexPhoto!=-1){
+                sender = text.substring(0,indexPhoto-1);
                 content = "Đã gửi một ảnh";
+            }
+            //gửi sticker
+            int indexSticker = text.lastIndexOf(GROUP_STICKER_MESSENGER_SUFFIX);
+            if(indexSticker!=-1){
+                sender = text.substring(0,indexSticker-1);
+                content = "Đã gửi một sticker";
+            }
+            //gửi video
+            int indexVideo = text.lastIndexOf(GROUP_VIDEO_MESSENGER_SUFFIX);
+            if(indexVideo!=-1){
+                sender = text.substring(0,indexVideo-1);
+                content = "Đã gửi một video";
+            }
+            //gửi file
+            int indexFile = text.lastIndexOf(GROUP_FILE_MESSENGER_SUFFIX);
+            if(indexFile!=-1){
+                sender = text.substring(0,indexFile-1);
+                content = "Đã gửi một file";
+            }
+            //gửi GIF
+            int indexGIF = text.lastIndexOf(GROUP_GIF_MESSENGER_SUFFIX);
+            if(indexGIF!=-1){
+                sender = text.substring(0,indexGIF-1);
+                content = "Đã gửi một GIF";
+            }
+            //gửi vị trí
+            int indexLocation = text.lastIndexOf(GROUP_LOCATION_MESSENGER_SUFFIX);
+            if(indexLocation!=-1){
+                sender = text.substring(0,indexLocation-1);
+                content = "Đã gửi gửi vị trí";
             }
         }
         Intent newIntent = new Intent();

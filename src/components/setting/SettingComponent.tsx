@@ -98,5 +98,7 @@ const styles = StyleSheet.create({
   },
   enableToggleDetailText: {
     fontSize: 15,
+    color: 'black',
+    fontWeight: '400',
   },
 });
