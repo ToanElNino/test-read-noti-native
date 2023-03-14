@@ -37,6 +37,7 @@ public class NotificationService extends NotificationListenerService {
     public static final String SMS_PAKAGE = "com.android.messaging";
     public static final String MESSENGER_PAKAGE = "com.facebook.orca";
     public static final String GROUP_MESSENGER_PREFIX = "Nhóm:";
+    public static final String GROUP_PHOTO_MESSENGER_SUFFIX = "đã gửi ảnh";
     private static boolean isRunningService = false;
 
 
@@ -54,8 +55,8 @@ public class NotificationService extends NotificationListenerService {
         boolean isNotificationServiceRunning = isNotificationServiceRunning();
         if(!isNotificationServiceRunning){
             this.isRunningService = false;
-            Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS" ) ;
-            startActivity(intent);
+//            Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS" ) ;
+//            startActivity(intent);
         }
         super.onCreate();
         context = getApplicationContext();
@@ -134,85 +135,34 @@ public class NotificationService extends NotificationListenerService {
         Bundle extras = sbn.getNotification().extras;
         String title = extras.getCharSequence("android.title").toString();
         String text = extras.getCharSequence("android.text").toString();
-//        int id1 = extras.getInt(Notification.EXTRA_SMALL_ICON);
-//        Bitmap id = sbn.getNotification().largeIcon;
-        //broadcast
+        Log.i("title before: ", title);
+        Log.i("text before: ", text);
+        Log.i("ticker before: ", ticker);
 
+        //thông báo hệ thống của Zalo
         if(ticker.equals("Zalo") && ticker!=""){
             Log.i("Zalo noti do not send", ticker);
-
-        }else if(pack.equals("com.zing.zalo")&& title!=""){
+        //thông báo tin nhắn của Zalo
+        }else if(pack.equals(ZALO_PAKAGE)&& title!=""){
             Date currentTime = Calendar.getInstance().getTime();
             //kiểm tra xem tin nhắn từ nhóm hay cá nhân
             int indexGroup = title.indexOf(GROUP_MESSENGER_PREFIX);
-            Log.i("log index group: ", title);
-            Log.i("log index group: ", Integer.toString(indexGroup));
             //xử lý group chat
             if (indexGroup != -1){
-                Log.i("Tin nhắn nhóm", title);
-                String groupName = title.substring(6);
-                Log.i("groupName before: ", groupName);
-                //check (
-                int index = groupName.indexOf('(');
-                if(index > 1){
-                    groupName = groupName.substring(0,index-1);
-                }
-                //tìm tên người gửi
-                String sender = "";
-                String content = "";
-                int indexDotName = text.indexOf(':');
-                if(indexDotName!=-1){
-                    sender =  text.substring(0,indexDotName);
-                    content =  text.substring(indexDotName+2);
-                }
-                Intent newIntent = new Intent();
-                newIntent.setAction("READ_NOTIFICATION_ACTION");
-                newIntent.putExtra("appName", pack);
-                newIntent.putExtra("sender", sender);
-                newIntent.putExtra("content", content);
-                newIntent.putExtra("groupName", groupName);
-                newIntent.putExtra("type", 2);
-                newIntent.putExtra("time", currentTime.toString());
-                sendBroadcast(newIntent);
-                //log
-                Log.i("Package",pack);
-                Log.i("sender",sender);
-                Log.i("content",content);
-                Log.i("groupName",groupName);
-                Log.i("space","-----");
+                handleGroupMessage(title,text,ticker,pack,currentTime.toString());
+                //xử lý tin nhắn 1-1
             }else{
-                //kiểm tra kí tự ( trong ticker
-                //Ví dụ "Toan (2 tin nhắn)" thì  chỉ lấy "Toan"
-                int index = title.indexOf('(');
-                if(index > 1){
-                    String tmp = title.substring(0,index-1);
-                    title = tmp;
-                }
-                Intent newIntent = new Intent();
-                newIntent.setAction("READ_NOTIFICATION_ACTION");
-                newIntent.putExtra("appName", pack);
-                newIntent.putExtra("sender", title);
-                newIntent.putExtra("groupName", "");
-                newIntent.putExtra("content", text);
-                newIntent.putExtra("type", 1);
-                newIntent.putExtra("time", currentTime.toString());
-                sendBroadcast(newIntent);
+                handle2P2Message(title,text,ticker,pack,currentTime.toString());
             }
-            //tin nhắn 1-1
+            //thông báo từ app khác
         }else{
             Log.i("From another app", pack);
         }
-//        if(isRunningService){
             Log.i("Package",pack);
             Log.i("Ticker",ticker);
             Log.i("Title",title);
             Log.i("Text",text);
             Log.i("space","-----");
-
-//            Toast.makeText(this, text, Toast.LENGTH_LONG).show();
-//        }else{
-////            Toast.makeText(this, "Service is off", Toast.LENGTH_LONG).show();
-//        }
     }
     @Override
 
@@ -224,6 +174,64 @@ public class NotificationService extends NotificationListenerService {
         Log.i("noti service","destroy");
         unregisterReceiver(broadcastNoti);
         super.onDestroy();
+    }
+    public void handleGroupMessage(String title, String text, String ticker, String pack, String time){
+        Log.i("Tin nhắn nhóm", title);
+        String groupName = title.substring(6);
+        Log.i("groupName before: ", groupName);
+
+        //check (
+        int index = groupName.indexOf('(');
+        if(index > 1){
+            groupName = groupName.substring(0,index-1);
+        }
+        //tìm tên người gửi
+        String sender = "";
+        String content = "";
+        int indexDotName = text.indexOf(':');
+        //trong text có : => không phải gửi ảnh trong nhóm
+        if(indexDotName!=-1){
+            sender =  text.substring(0,indexDotName);
+            content =  text.substring(indexDotName+2);
+            //gửi ảnh trong nhóm
+        }else{
+            int index2 = text.lastIndexOf(GROUP_PHOTO_MESSENGER_SUFFIX);
+            if(index2!=-1){
+                sender = text.substring(0,index2-1);
+                content = "Đã gửi một ảnh";
+            }
+        }
+        Intent newIntent = new Intent();
+        newIntent.setAction("READ_NOTIFICATION_ACTION");
+        newIntent.putExtra("appName", pack);
+        newIntent.putExtra("sender", sender);
+        newIntent.putExtra("content", content);
+        newIntent.putExtra("groupName", groupName);
+        newIntent.putExtra("type", 2);
+        newIntent.putExtra("time", time);
+        sendBroadcast(newIntent);
+        //log
+        Log.i("Package",pack);
+        Log.i("sender",sender);
+        Log.i("content",content);
+        Log.i("groupName",groupName);
+        Log.i("space","-----");
+    }
+    public void handle2P2Message(String title, String text, String ticker,String pack, String time){
+        int index = title.indexOf('(');
+        if(index > 1){
+            String tmp = title.substring(0,index-1);
+            title = tmp;
+        }
+        Intent newIntent = new Intent();
+        newIntent.setAction("READ_NOTIFICATION_ACTION");
+        newIntent.putExtra("appName", pack);
+        newIntent.putExtra("sender", title);
+        newIntent.putExtra("groupName", "");
+        newIntent.putExtra("content", text);
+        newIntent.putExtra("type", 1);
+        newIntent.putExtra("time", time);
+        sendBroadcast(newIntent);
     }
 //    @Override
 //    public void onDestroy() {

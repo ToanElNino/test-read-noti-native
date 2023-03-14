@@ -63,8 +63,26 @@ function App(): JSX.Element {
 
   return (
     <NavigationContainer>
-      <RootStack.Navigator initialRouteName="Setting">
-        <RootStack.Screen name="Setting" component={Setting} />
+      <RootStack.Navigator
+        initialRouteName="Setting"
+        screenOptions={{
+          headerShown: true,
+        }}>
+        <RootStack.Screen
+          name="Setting"
+          options={{
+            title: 'Setting',
+            headerStyle: {
+              backgroundColor: '#0099ff',
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+              fontWeight: '500',
+              marginLeft: 5,
+            },
+          }}
+          component={Setting}
+        />
         <RootStack.Screen
           name="SelectApp"
           component={SelectApp}

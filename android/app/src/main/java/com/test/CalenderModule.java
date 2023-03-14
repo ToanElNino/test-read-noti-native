@@ -57,7 +57,6 @@ class CalendarModule extends ReactContextBaseJavaModule {
       Intent stopIntent = new Intent(this.getReactApplicationContext(), NotificationService.class);
       stopIntent.putExtra("foregroundExtra", "STOP_SERVICE");
       ContextCompat.startForegroundService(this.getReactApplicationContext(), stopIntent);
-//      getReactApplicationContext().stopService(stopIntent);
 
 }
    @ReactMethod(isBlockingSynchronousMethod = true)
