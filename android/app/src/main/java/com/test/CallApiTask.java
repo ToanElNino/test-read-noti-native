@@ -31,15 +31,5 @@ public class CallApiTask extends AsyncTask<RequestBody,Void, Response> {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-//        try {
-//            Response response = client.newCall(request).execute();
-////            return response;
-//
-//            // Do something with the response.
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
-//        return new Response();
     }
 }

@@ -29,11 +29,17 @@ public class ReadNotiBroadcast extends BroadcastReceiver {
             String appName = intent.getStringExtra("appName");
             String content = intent.getStringExtra("content");
             String sender = intent.getStringExtra("sender");
+            String groupName = intent.getStringExtra("groupName");
+            String time = intent.getStringExtra("time");
+            int type = intent.getIntExtra("type", 0);
             OkHttpClient client = new OkHttpClient();
             RequestBody formBody = new FormBody.Builder()
                     .add("appName", appName)
                     .add("sender", sender)
                     .add("content", content)
+                    .add("groupName", groupName)
+                    .add("type", Integer.toString(type))
+                    .add("time", time)
                     .build();
             Request request = new Request.Builder()
                     .url("https://64098fd06ecd4f9e18b44632.mockapi.io/api/notificationLogs")

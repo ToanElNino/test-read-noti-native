@@ -18,6 +18,8 @@ import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -34,6 +36,7 @@ public class NotificationService extends NotificationListenerService {
     public static final String ZALO_PAKAGE = "com.zing.zalo";
     public static final String SMS_PAKAGE = "com.android.messaging";
     public static final String MESSENGER_PAKAGE = "com.facebook.orca";
+    public static final String GROUP_MESSENGER_PREFIX = "Nhóm:";
     private static boolean isRunningService = false;
 
 
@@ -139,19 +142,63 @@ public class NotificationService extends NotificationListenerService {
             Log.i("Zalo noti do not send", ticker);
 
         }else if(pack.equals("com.zing.zalo")&& title!=""){
-            //kiểm tra kí tự ( trong ticker
-            //Ví dụ "Toan (2 tin nhắn)" thì  chỉ lấy "Toan"
-            int index = title.indexOf('(');
-            if(index > 1){
-                String tmp = title.substring(0,index-1);
-                title = tmp;
+            Date currentTime = Calendar.getInstance().getTime();
+            //kiểm tra xem tin nhắn từ nhóm hay cá nhân
+            int indexGroup = title.indexOf(GROUP_MESSENGER_PREFIX);
+            Log.i("log index group: ", title);
+            Log.i("log index group: ", Integer.toString(indexGroup));
+            //xử lý group chat
+            if (indexGroup != -1){
+                Log.i("Tin nhắn nhóm", title);
+                String groupName = title.substring(6);
+                Log.i("groupName before: ", groupName);
+                //check (
+                int index = groupName.indexOf('(');
+                if(index > 1){
+                    groupName = groupName.substring(0,index-1);
+                }
+                //tìm tên người gửi
+                String sender = "";
+                String content = "";
+                int indexDotName = text.indexOf(':');
+                if(indexDotName!=-1){
+                    sender =  text.substring(0,indexDotName);
+                    content =  text.substring(indexDotName+2);
+                }
+                Intent newIntent = new Intent();
+                newIntent.setAction("READ_NOTIFICATION_ACTION");
+                newIntent.putExtra("appName", pack);
+                newIntent.putExtra("sender", sender);
+                newIntent.putExtra("content", content);
+                newIntent.putExtra("groupName", groupName);
+                newIntent.putExtra("type", 2);
+                newIntent.putExtra("time", currentTime.toString());
+                sendBroadcast(newIntent);
+                //log
+                Log.i("Package",pack);
+                Log.i("sender",sender);
+                Log.i("content",content);
+                Log.i("groupName",groupName);
+                Log.i("space","-----");
+            }else{
+                //kiểm tra kí tự ( trong ticker
+                //Ví dụ "Toan (2 tin nhắn)" thì  chỉ lấy "Toan"
+                int index = title.indexOf('(');
+                if(index > 1){
+                    String tmp = title.substring(0,index-1);
+                    title = tmp;
+                }
+                Intent newIntent = new Intent();
+                newIntent.setAction("READ_NOTIFICATION_ACTION");
+                newIntent.putExtra("appName", pack);
+                newIntent.putExtra("sender", title);
+                newIntent.putExtra("groupName", "");
+                newIntent.putExtra("content", text);
+                newIntent.putExtra("type", 1);
+                newIntent.putExtra("time", currentTime.toString());
+                sendBroadcast(newIntent);
             }
-            Intent newIntent = new Intent();
-            newIntent.setAction("READ_NOTIFICATION_ACTION");
-            newIntent.putExtra("appName", pack);
-            newIntent.putExtra("sender", title);
-            newIntent.putExtra("content", text);
-            sendBroadcast(newIntent);
+            //tin nhắn 1-1
         }else{
             Log.i("From another app", pack);
         }
